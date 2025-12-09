@@ -1,4 +1,7 @@
+import 'package:expense_manager/providers/gemini_provider.dart';
+import 'package:expense_manager/providers/gpt_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:gpt_markdown/gpt_markdown.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:expense_manager/providers/transaction_provider.dart';
@@ -194,11 +197,116 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget _buildResponseAI(GPTProvider aiprovider) {
+    return Stack(
+      children: [
+        if (aiprovider.loading)
+          const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Center(child: CircularProgressIndicator()),
+          ),
+
+        if (aiprovider.error != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: Colors.red.shade50,
+                border: Border.all(color: Colors.red.shade300),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                aiprovider.error!,
+                style: TextStyle(color: Colors.red.shade900),
+              ),
+            ),
+          ),
+
+        if (aiprovider.advice != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: Colors.amber.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.amber.shade200),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.psychology_alt, color: Colors.amber.shade800),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      aiprovider.advice!,
+                      style: const TextStyle(fontSize: 14, height: 1.4),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+      ],
+    );
+  }
+
+  void _showAIAdvicePopup(BuildContext context, String advice) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            constraints: const BoxConstraints(
+              maxHeight: 500,
+              minWidth: 300,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  "Saran Keuangan AI",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 12),
+
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: GptMarkdown(
+                      advice,
+                      style: const TextStyle(fontSize: 14, height: 1.4),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("Tutup"),
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<TransactionProvider>(context);
     final themeProvider = Provider.of<ThemeProvider>(context);
     final items = filteredItems(provider.items);
+    final gpt = Provider.of<GPTProvider>(context);
 
     // compute date-filtered totals (no decimals)
     final List<TransactionItem> dateFiltered = (_daysFilter > 0)
@@ -327,6 +435,35 @@ class _HomePageState extends State<HomePage> {
                     _buildSummaryCard('Expenses', '- ${formatCurrency(expenseTotal)}', Colors.red, Icons.trending_down, textColor: Colors.red[800]),
                   ],
                 ),
+              ),
+            ),
+
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: SizedBox(
+                width: double.infinity,
+                child: Consumer<GPTProvider>(
+                  builder: (context, gpt, _) {
+                    return ElevatedButton(
+                      onPressed: gpt.loading
+                          ? null
+                          : () async {
+                        await gpt.fetchAdvice(provider.items);
+                        if (gpt.advice != null && context.mounted) {
+                          _showAIAdvicePopup(context, gpt.advice!);
+                        }
+                      },
+                      child: gpt.loading
+                          ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                          : const Text("Dapatkan Saran AI"),
+                    );
+                  },
+                )
               ),
             ),
 

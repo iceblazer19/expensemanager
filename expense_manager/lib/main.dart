@@ -1,3 +1,5 @@
+import 'package:expense_manager/providers/gemini_provider.dart';
+import 'package:expense_manager/providers/gpt_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:expense_manager/providers/transaction_provider.dart';
@@ -158,10 +160,15 @@ class _ExpenseManagerAppState extends State<ExpenseManagerApp> {
       useMaterial3: true,
     );
 
+    var openAIKey = "YOUR_OPENAI_API_KEY";
+    var geminiKey = "YOUR_GEMINI_API_KEY";
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => TransactionProvider()..loadTransactions()),
         ChangeNotifierProvider<ThemeProvider>.value(value: widget.themeProvider),
+        ChangeNotifierProvider(create: (_) => GeminiProvider(geminiKey)),
+        ChangeNotifierProvider(create: (_) => GPTProvider(gptApiKey: openAIKey)),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) {
@@ -181,7 +188,7 @@ class _ExpenseManagerAppState extends State<ExpenseManagerApp> {
 }
 
 class _LoadingSplash extends StatelessWidget {
-  const _LoadingSplash({super.key});
+  const _LoadingSplash();
 
   @override
   Widget build(BuildContext context) {
