@@ -109,6 +109,9 @@ Berikan jawaban ringkas namun tajam dalam bahasa Indonesia.
         _advice = content;
         _loading = false;
       } else {
+        // Print full error response for debugging
+        print("OpenAI API Error: ${response.statusCode}");
+        print("Response body: ${response.body}");
         _error = "Gagal mengambil saran (status ${response.statusCode}).";
         _loading = false;
       }
