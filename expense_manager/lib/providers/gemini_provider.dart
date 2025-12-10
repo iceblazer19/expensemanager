@@ -22,7 +22,7 @@ class GeminiProvider extends ChangeNotifier {
     notifyListeners();
 
     final url = Uri.parse(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=$apiKey",
+      "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=$apiKey",
     );
 
     final transactionsText = items.map((t) {
@@ -79,6 +79,8 @@ Tuliskan ringkas, jelas, actionable, dalam Bahasa Indonesia.
 
         _advice = output ?? "Tidak ada saran dari AI.";
       } else {
+        print("Gemini API Error: ${res.statusCode}");
+        print("Response body: ${res.body}");
         _error = "Gagal mengambil saran (status ${res.statusCode}).";
       }
     } catch (e) {

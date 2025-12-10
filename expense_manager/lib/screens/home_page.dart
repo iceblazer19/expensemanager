@@ -1,5 +1,6 @@
 import 'package:expense_manager/providers/gemini_provider.dart';
 import 'package:expense_manager/providers/gpt_provider.dart';
+import 'package:expense_manager/providers/combined_ai_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:gpt_markdown/gpt_markdown.dart';
 import 'package:provider/provider.dart';
@@ -443,18 +444,36 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: SizedBox(
                 width: double.infinity,
-                child: Consumer<GPTProvider>(
-                  builder: (context, gpt, _) {
+                child: Consumer<CombinedAIProvider>(
+                  builder: (context, aiProvider, _) {
                     return ElevatedButton(
-                      onPressed: gpt.loading
+                      onPressed: aiProvider.loading
                           ? null
                           : () async {
-                        await gpt.fetchAdvice(provider.items);
-                        if (gpt.advice != null && context.mounted) {
-                          _showAIAdvicePopup(context, gpt.advice!);
+                        await aiProvider.fetchAdviceWithFallback(provider.items);
+                        if (aiProvider.advice != null && context.mounted) {
+                          // Show which AI was used
+                          final usedAI = aiProvider.usedProvider ?? 'AI';
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Saran dari $usedAI'),
+                              backgroundColor: Colors.green,
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                          _showAIAdvicePopup(context, aiProvider.advice!);
+                        } else if (aiProvider.error != null && context.mounted) {
+                          // Show error message
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Error: ${aiProvider.error}'),
+                              backgroundColor: Colors.red,
+                              duration: const Duration(seconds: 5),
+                            ),
+                          );
                         }
                       },
-                      child: gpt.loading
+                      child: aiProvider.loading
                           ? const SizedBox(
                         width: 20,
                         height: 20,

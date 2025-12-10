@@ -1,5 +1,6 @@
 import 'package:expense_manager/providers/gemini_provider.dart';
 import 'package:expense_manager/providers/gpt_provider.dart';
+import 'package:expense_manager/providers/combined_ai_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:expense_manager/providers/transaction_provider.dart';
@@ -169,6 +170,12 @@ class _ExpenseManagerAppState extends State<ExpenseManagerApp> {
         ChangeNotifierProvider<ThemeProvider>.value(value: widget.themeProvider),
         ChangeNotifierProvider(create: (_) => GeminiProvider(geminiKey)),
         ChangeNotifierProvider(create: (_) => GPTProvider(gptApiKey: openAIKey)),
+        ChangeNotifierProvider(
+          create: (_) => CombinedAIProvider(
+            geminiApiKey: geminiKey,
+            gptApiKey: openAIKey,
+          ),
+        ),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) {
