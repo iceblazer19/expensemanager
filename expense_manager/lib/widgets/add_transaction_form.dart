@@ -17,7 +17,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
   final _amountController = TextEditingController();
   bool _isIncome = false;
 
-  // Restore the category lists (these were the arrays shown in your screenshot)
+  // Restore the category lists
   static const List<String> _incomeCategories = [
     'Salary',
     'Bonus',
@@ -33,6 +33,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
 
   static const List<String> _expenseCategories = [
     'Food',
+    'Drinks',
     'Groceries',
     'Bills',
     'Rent',
@@ -88,7 +89,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
       date: DateTime.now(),
     );
 
-    // Using provider to add transaction (adjust if your provider API differs)
+    // Using provider to add transaction
     Provider.of<TransactionProvider>(context, listen: false).addTransaction(item);
 
     Navigator.of(context).pop();
@@ -103,7 +104,6 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    // Use small, contrasting prefix background depending on theme so icon is always visible
     final prefixBg = isDark ? Colors.white12 : Colors.black.withOpacity(0.06);
     final iconColor = isDark ? Colors.white : Colors.black87;
 
@@ -193,7 +193,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                     ),
                   ),
 
-                  // List (no dividing lines)
+                  // List 
                   Expanded(
                     child: filtered.isEmpty
                         ? Center(child: Text('No results', style: theme.textTheme.bodyMedium))
@@ -206,8 +206,6 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                               return ListTile(
                                 title: Text(c),
                                 dense: true,
-                                // remove any separators by not using Dividers or separators
-                                // keep a subtle tile color on selection only
                                 trailing: selected ? Icon(Icons.check, color: theme.colorScheme.primary) : null,
                                 onTap: () {
                                   picked = c;

@@ -35,7 +35,7 @@ class _ExpenseManagerAppState extends State<ExpenseManagerApp> {
   @override
   void initState() {
     super.initState();
-    // Load saved theme preference after engine is ready to avoid platform-channel errors.
+    // Load saved theme preference after engine is ready
     widget.themeProvider.loadFromPrefs().whenComplete(() {
       if (mounted) setState(() => _ready = true);
     });
@@ -43,21 +43,19 @@ class _ExpenseManagerAppState extends State<ExpenseManagerApp> {
 
   @override
   Widget build(BuildContext context) {
-    // Palette derived from your reference image:
-    // Dark mode (left): deep maroon/plum tones (accent colors kept)
+    // Dark mode 
     const darkAccent1 = Color(0xFFB53A3A); // primary muted red accent for CTAs
     const darkAccent2 = Color(0xFF9E3333);
     const darkAccent3 = Color(0xFF7F2A2A);
     const darkAccent4 = Color(0xFF5C1E1E);
-    // Use a dark grey for the scaffold background as requested
-    const darkSurface = Color(0xFF121212); // <-- changed to dark grey
+    const darkSurface = Color(0xFF121212); 
 
-    // Light mode (right): warm peach + dusty blue slate
+    // Light mode 
     const lightAccent1 = Color(0xFFF0B86D); // warm peach
     const lightAccent2 = Color(0xFFD8737F); // dusty rose
     const lightAccent3 = Color(0xFFA8B6C2); // muted blue-gray
     const lightAccent4 = Color(0xFFB6D7D9); // pale teal
-    const lightSurface = Color(0xFF475C7A); // slate (good for primary elements)
+    const lightSurface = Color(0xFF475C7A); // slate 
 
     final lightColorScheme = ColorScheme.fromSwatch(
       primarySwatch: createMaterialColor(lightSurface),
@@ -73,7 +71,6 @@ class _ExpenseManagerAppState extends State<ExpenseManagerApp> {
       brightness: Brightness.light,
       primaryColor: lightSurface,
       colorScheme: lightColorScheme,
-      // slightly darker off-white to reduce glare
       scaffoldBackgroundColor: const Color(0xFFF2EFEA),
       appBarTheme: AppBarTheme(
         elevation: 0,
@@ -101,7 +98,6 @@ class _ExpenseManagerAppState extends State<ExpenseManagerApp> {
           elevation: 2,
         ),
       ),
-      // toggles use the secondary (accent) color
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((_) => lightAccent1),
         trackColor: WidgetStateProperty.resolveWith((_) => lightAccent1.withOpacity(0.36)),
@@ -119,7 +115,6 @@ class _ExpenseManagerAppState extends State<ExpenseManagerApp> {
       brightness: Brightness.dark,
       primaryColor: darkSurface,
       colorScheme: darkColorScheme,
-      // apply the requested dark grey scaffold background
       scaffoldBackgroundColor: darkSurface,
       appBarTheme: AppBarTheme(
         elevation: 0,
@@ -127,7 +122,6 @@ class _ExpenseManagerAppState extends State<ExpenseManagerApp> {
         iconTheme: const IconThemeData(color: Colors.white),
         titleTextStyle: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w700),
       ),
-      // card surfaces slightly lighter than scaffold for subtle contrast
       cardTheme: CardThemeData(
         color: const Color(0xFF1E1E1E),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -161,8 +155,8 @@ class _ExpenseManagerAppState extends State<ExpenseManagerApp> {
       useMaterial3: true,
     );
 
-    var openAIKey = "YOUR_OPENAI_API_KEY";
-    var geminiKey = "YOUR_GEMINI_API_KEY";
+    var openAIKey = "YOU_OPENAI_API_KEY_HERE";
+    var geminiKey = "YOUR_GEMINI_API_KEY_HERE";
 
     return MultiProvider(
       providers: [
@@ -185,7 +179,6 @@ class _ExpenseManagerAppState extends State<ExpenseManagerApp> {
             theme: lightTheme,
             darkTheme: darkTheme,
             themeMode: themeProvider.isDark ? ThemeMode.dark : ThemeMode.light,
-            // show a tiny splash while theme loads to avoid a flash
             home: _ready ? const HomePage() : const _LoadingSplash(),
           );
         },

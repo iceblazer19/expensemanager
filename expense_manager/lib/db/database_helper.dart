@@ -38,23 +38,23 @@ class DatabaseHelper {
       )
     ''');
     // Insert sample data
-    final now = DateTime.now().millisecondsSinceEpoch;
-    await db.insert(tableTransactions, {
-      'id': 't1',
-      'title': 'Salary',
-      'amount': 3200.0,
-      'date': now - (2 * 86400000),
-      'isIncome': 1,
-      'category': 'Job',
-    });
-    await db.insert(tableTransactions, {
-      'id': 't2',
-      'title': 'Groceries',
-      'amount': 76.45,
-      'date': now - (1 * 86400000),
-      'isIncome': 0,
-      'category': 'Food',
-    });
+    // final now = DateTime.now().millisecondsSinceEpoch;
+    // await db.insert(tableTransactions, {
+    //   'id': 't1',
+    //   'title': 'Salary',
+    //   'amount': 3200.0,
+    //   'date': now - (2 * 86400000),
+    //   'isIncome': 1,
+    //   'category': 'Job',
+    // });
+    // await db.insert(tableTransactions, {
+    //   'id': 't2',
+    //   'title': 'Groceries',
+    //   'amount': 76.45,
+    //   'date': now - (1 * 86400000),
+    //   'isIncome': 0,
+    //   'category': 'Food',
+    // });
   }
 
   Future<Database> get database async {
